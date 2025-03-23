@@ -1,0 +1,27 @@
+plugins {
+    id 'java'
+    // 초기세팅 0
+    id 'org.springframework.boot' version '3.2.0'
+    id 'io.spring.dependency-management' version '1.1.0'
+}
+
+group = 'org.example'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // 초기 세팅 1
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // 인메모리 데이터베이스 (초기세팅 2)
+    runtimeOnly 'com.h2database:h2'
+}
+
+test {
+    useJUnitPlatform()
+}
