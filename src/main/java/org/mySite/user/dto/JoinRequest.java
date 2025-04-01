@@ -2,13 +2,17 @@ package org.mySite.user.dto;
 
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.mySite.user.domain.User;
 import org.mySite.user.domain.UserRole;
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Setter
 public class JoinRequest {
 
     @NotBlank(message = "로그인 아이디를 입력하세요.")
