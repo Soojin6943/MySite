@@ -30,11 +30,10 @@ public class CookieLoginController {
 
         // 로그인 구현 전 임시 추가
         //model.addAttribute("nickname", "kk");
-
-        User loginUser = userService.getLoginUser(userId);
-
-        if(loginUser != null) {
+        if (userId != null) {
+            User loginUser = userService.getLoginUser(userId);
             model.addAttribute("nickname", loginUser.getNickname());
+
         }
 
         return "home";
