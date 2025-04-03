@@ -84,7 +84,7 @@ public class CookieLoginController {
         model.addAttribute("loginType", "cookie-login");
         model.addAttribute("pageName", "쿠키 로그인");
 
-        model.addAttribute("loginResult", new LoginRequest());
+        model.addAttribute("loginRequest", new LoginRequest());
         return "login";
     }
 
@@ -95,6 +95,8 @@ public class CookieLoginController {
         model.addAttribute("pageName", "쿠키 로그인");
 
         User user = userService.login(loginRequest);
+        // System.out.println("입력된 로그인 ID: " + loginRequest.getLoginId());
+
 
         // 틀릴 경우 global error return
         if(user == null){
