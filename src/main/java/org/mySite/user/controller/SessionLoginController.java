@@ -118,4 +118,17 @@ public class SessionLoginController {
         return "redirect:/session-login";
     }
 
+    // logout
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request, Model model){
+        model.addAttribute("loginType", "session-login");
+        model.addAttribute("pageName", "세션 로그인");
+
+        // false -> session이 없으면 null return
+        HttpSession session = request.getSession(false);
+        if(session != null) {
+            session.invalidate();
+        }
+        return "redirect:/session-login";
+    }
 }
