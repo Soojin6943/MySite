@@ -55,4 +55,16 @@ public class UserService {
 
         return user;
     }
+
+    // Security 로그인에서 사용
+    // 인증, 인가 시 사용
+    // loginId가 null이거나 찾아온 User가 없으면 null 리턴
+    public User getLoginUserByLoginId(String loginId){
+        if (loginId == null) return null;
+
+        Optional<User> optionalUser = userRepository.findByLoginId(loginId);
+        if(optionalUser.isEmpty()) return null;
+
+        return optionalUser.get();
+    }
 }
