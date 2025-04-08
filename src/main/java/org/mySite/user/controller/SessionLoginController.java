@@ -1,9 +1,14 @@
 package org.mySite.user.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.mySite.user.domain.User;
+import org.mySite.user.domain.UserRole;
 import org.mySite.user.dto.JoinRequest;
+import org.mySite.user.dto.LoginRequest;
 import org.mySite.user.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -65,12 +70,101 @@ public class SessionLoginController {
             bindingResult.addError(new FieldError("joinRequest", "passwordCheck", "비밀번호가 일치하지 않습니다"));
         }
 
-        // 최종
+        // 최종 확인
         if(bindingResult.hasErrors()){
             return "join";
         }
 
         userService.join(joinRequest);
         return "redirect:/session-login";
+    }
+
+    // 로그인 페이지
+    @GetMapping("/login")
+    public String loginPage(Model model){
+        model.addAttribute("loginType", "session-login");
+        model.addAttribute("pageName", "세션 로그인");
+
+        model.addAttribute("loginRequest", new LoginRequest());
+        return "login";
+    }
+
+    // 로그인
+    @PostMapping("/login")
+    public String login(@ModelAttribute LoginRequest loginRequest, BindingResult bindingResult, HttpServletRequest httpServletRequest, Model model) {
+        model.addAttribute("loginType", "session-login");
+        model.addAttribute("pageName", "세션 로그인");
+
+        User user = userService.login(loginRequest);
+
+        if(user == null) {
+            bindingResult.reject("loginFail", "로그인 아이디 또는 비밀번호가 틀렸습니다.");
+        }
+
+        // 로그인 실패 시 로그인 페이지로 반환
+        if(bindingResult.hasErrors()){
+            return "login";
+        }
+
+        // 로그인 성공 -> 세션 생성
+        // 세션 생성 전 기존 세션 파기
+        httpServletRequest.getSession().invalidate();
+        // Session이 없으면 생성
+        HttpSession session = httpServletRequest.getSession(true);
+        // 세션에 userId를 넣어줌
+        session.setAttribute("userId", user.getId());
+        // session 유지 시간 30분
+        session.setMaxInactiveInterval(1800);
+
+        return "redirect:/session-login";
+    }
+
+    // logout
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request, Model model){
+        model.addAttribute("loginType", "session-login");
+        model.addAttribute("pageName", "세션 로그인");
+
+        // false -> session이 없으면 null return
+        HttpSession session = request.getSession(false);
+        if(session != null) {
+            session.invalidate();
+        }
+        return "redirect:/session-login";
+    }
+
+    // info
+    @GetMapping("/info")
+    public String info(@SessionAttribute(name = "userId", required = false) Long userId, Model model){
+        model.addAttribute("loginType", "session-login");
+        model.addAttribute("pageName", "세션 로그인");
+
+        User loginUser = userService.getLoginUser(userId);
+
+        if(loginUser == null){
+            return "redirect:/session-login/login";
+        }
+
+        model.addAttribute("user", loginUser);
+        return "info";
+    }
+
+    // admin
+    @GetMapping("/admin")
+    public String admin(@SessionAttribute(name = "userId", required = false) Long userId, Model model){
+        model.addAttribute("loginType", "session-login");
+        model.addAttribute("pageName", "세션 로그인");
+
+        User loginUser = userService.getLoginUser(userId);
+
+        if(loginUser == null){
+            return "redirect:/session-login/login";
+        }
+
+        if(!loginUser.getRole().equals(UserRole.ADMIN)) {
+            return "redirect:/session-login";
+        }
+
+        return "admin";
     }
 }
