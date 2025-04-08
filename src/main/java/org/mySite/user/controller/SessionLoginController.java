@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.mySite.user.domain.User;
+import org.mySite.user.domain.UserRole;
 import org.mySite.user.dto.JoinRequest;
 import org.mySite.user.dto.LoginRequest;
 import org.mySite.user.service.UserService;
@@ -130,5 +131,40 @@ public class SessionLoginController {
             session.invalidate();
         }
         return "redirect:/session-login";
+    }
+
+    // info
+    @GetMapping("/info")
+    public String info(@SessionAttribute(name = "userId", required = false) Long userId, Model model){
+        model.addAttribute("loginType", "session-login");
+        model.addAttribute("pageName", "세션 로그인");
+
+        User loginUser = userService.getLoginUser(userId);
+
+        if(loginUser == null){
+            return "redirect:/session-login/login";
+        }
+
+        model.addAttribute("user", loginUser);
+        return "info";
+    }
+
+    // admin
+    @GetMapping("/admin")
+    public String admin(@SessionAttribute(name = "userId", required = false) Long userId, Model model){
+        model.addAttribute("loginType", "session-login");
+        model.addAttribute("pageName", "세션 로그인");
+
+        User loginUser = userService.getLoginUser(userId);
+
+        if(loginUser == null){
+            return "redirect:/session-login/login";
+        }
+
+        if(!loginUser.getRole().equals(UserRole.ADMIN)) {
+            return "redirect:/session-login";
+        }
+
+        return "admin";
     }
 }
