@@ -1,5 +1,7 @@
 package org.mySite.SpringSecurity;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.mySite.user.domain.User;
 import org.mySite.user.dto.JoinRequest;
@@ -8,7 +10,11 @@ import org.springframework.security.core.Authentication;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -40,6 +46,36 @@ public class SecurityLoginController {
 
         model.addAttribute("joinRequest", new JoinRequest());
         return "join";
+    }
+
+    // 회원가입
+    @PostMapping("/join")
+    public String join(@Valid @ModelAttribute JoinRequest joinRequest, BindingResult bindingResult, Model model){
+        model.addAttribute("loginType", "security-login");
+        model.addAttribute("pageName", "Security 로그인");
+
+        // loginId 중복 체크
+        if(userService.checkLoginId(joinRequest.getLoginId())){
+            bindingResult.addError(new FieldError("joinRequest", "loginId", "로그인 아이디가 중복됨"));
+        }
+
+        // nickname 중복 체크
+        if(userService.checkNickname(joinRequest.getNickname())) {
+            bindingResult.addError(new FieldError("joinRequest", "nickname", "닉네임이 중복됩니다."));
+        }
+
+        // password랑 passwordCheck 같은지 확인
+        if(!joinRequest.getPassword().equals(joinRequest.getPasswordCheck())){
+            bindingResult.addError(new FieldError("joinRequest", "passwordCheck", "비밀번호가 일치하지 않습니다."));
+        }
+
+        // 최종
+        if(bindingResult.hasErrors()){
+            return "join";
+        }
+
+        userService.join2(joinRequest);
+        return "redirect:/security-login";
     }
 
     // info
