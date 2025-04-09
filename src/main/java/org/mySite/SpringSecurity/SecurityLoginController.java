@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.mySite.user.domain.User;
 import org.mySite.user.dto.JoinRequest;
+import org.mySite.user.dto.LoginRequest;
 import org.mySite.user.service.UserService;
 import org.springframework.security.core.Authentication;
 
@@ -78,15 +79,38 @@ public class SecurityLoginController {
         return "redirect:/security-login";
     }
 
+    // 로그인 페이지
+    @GetMapping("/login")
+    public String loginPage(Model model){
+        model.addAttribute("loginType", "security-login");
+        model.addAttribute("pageName", "Security 로그인");
+
+        model.addAttribute("loginRequest", new LoginRequest());
+        return "login";
+    }
+
     // info
     @GetMapping("/info")
-    public String info(Model model){
+    public String info(Model model, Authentication auth){
+        model.addAttribute("loginType", "security-login");
+        model.addAttribute("pageName", "Security 로그인");
+
+        User loginUser = userService.getLoginUserByLoginId(auth.getName());
+
+        if(loginUser == null) {
+            return "redirect:/security-login/login";
+        }
+
+        model.addAttribute("user", loginUser);
         return "info";
     }
 
     // admin
     @GetMapping("/admin")
     public String admin(Model model){
+        model.addAttribute("loginType", "security-login");
+        model.addAttribute("pageName", "Security 로그인");
+
         return "admin";
     }
 
