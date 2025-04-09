@@ -5,6 +5,7 @@ import org.mySite.user.domain.User;
 import org.mySite.user.dto.JoinRequest;
 import org.mySite.user.dto.LoginRequest;
 import org.mySite.user.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -14,6 +15,7 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public User getLoginUser(Long loginRequest){
         User user = userRepository.findById(loginRequest)
@@ -66,5 +68,12 @@ public class UserService {
         if(optionalUser.isEmpty()) return null;
 
         return optionalUser.get();
+    }
+
+    // 회원가입 2
+    // 스프링 시큐리티에서 사용
+    // 비밀번호 암호화 사용
+    public void join2(JoinRequest request){
+        userRepository.save(request.toEntity(passwordEncoder.encode(request.getPassword())));
     }
 }

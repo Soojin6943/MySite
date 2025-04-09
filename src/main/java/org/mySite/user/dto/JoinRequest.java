@@ -34,4 +34,13 @@ public class JoinRequest {
                 .role(UserRole.USER)
                 .build();
     }
+
+    public User toEntity(String encodedPassword){
+        return User.builder()
+                .loginId(this.loginId)
+                .password(encodedPassword)
+                .nickname(this.nickname)
+                .role(UserRole.USER)
+                .build();
+    }
 }
