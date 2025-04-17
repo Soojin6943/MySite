@@ -1,22 +1,34 @@
-package org.mySite.SpringSecurity;
+package org.mySite.user.SpringSecurity;
 
+import io.jsonwebtoken.Jwt;
+import lombok.RequiredArgsConstructor;
 import org.mySite.user.domain.UserRole;
+import org.mySite.user.jwt.JwtTokenFilter;
+import org.mySite.user.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig{
-    @Bean
-    public PasswordEncoder passwordEncoder() {
+     //spring Security 로그인에서 사용 + JWT
+     @Bean
+     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
+     }
 
+
+     //spring security 사용
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -43,5 +55,26 @@ public class SecurityConfig{
                         .deleteCookies("JSESSIONID")
                 );
         return http.build();
+    }
+
+    //---------------------------
+
+    // JWT 로그인에서 사용
+    private final @Lazy JwtTokenFilter jwtTokenFilter;
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+         httpSecurity
+                .httpBasic(Customizer.withDefaults()) // Http Basic 인증 비활성화
+                .csrf(csrf -> csrf.disable())   // csrf 보호 비활성화(jwt는 상태가 없기 때문)
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 사용 안함 + 필수 설정
+                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)    // JWT 필터 추가
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/jwt-login/info").authenticated() // 인증 필요
+                        .requestMatchers("jwt-login/admin/**").hasAuthority(UserRole.ADMIN.name()) // ADMIN 권한 필요
+                        .anyRequest().permitAll() // 그 외 요청은 모두 허용
+                );
+         return httpSecurity.build();
     }
 }

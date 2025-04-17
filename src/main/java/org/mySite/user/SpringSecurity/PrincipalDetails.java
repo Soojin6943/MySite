@@ -1,4 +1,4 @@
-package org.mySite.SpringSecurity;
+package org.mySite.user.SpringSecurity;
 
 import org.mySite.user.domain.User;
 import org.springframework.security.core.GrantedAuthority;
