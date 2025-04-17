@@ -5,6 +5,8 @@ import org.mySite.user.domain.User;
 import org.mySite.user.dto.JoinRequest;
 import org.mySite.user.dto.LoginRequest;
 import org.mySite.user.repository.UserRepository;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -71,9 +73,19 @@ public class UserService {
     }
 
     // 회원가입 2
-    // 스프링 시큐리티에서 사용
+    // 스프링 시큐리티에서 사용 + JWT에서 사용
     // 비밀번호 암호화 사용
     public void join2(JoinRequest request){
         userRepository.save(request.toEntity(passwordEncoder.encode(request.getPassword())));
+    }
+
+    public UserDetails loadUserByUsername(String loginId) throws UsernameNotFoundException {
+        User user = userRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(user.getLoginId())
+                .password(user.getPassword())
+                .authorities(user.getRole().name())
+                .build();
     }
 }

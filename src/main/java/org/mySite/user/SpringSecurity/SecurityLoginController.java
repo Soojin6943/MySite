@@ -1,4 +1,4 @@
-package org.mySite.SpringSecurity;
+package org.mySite.user.SpringSecurity;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -7,6 +7,7 @@ import org.mySite.user.domain.User;
 import org.mySite.user.dto.JoinRequest;
 import org.mySite.user.dto.LoginRequest;
 import org.mySite.user.service.UserService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
 
 import org.springframework.stereotype.Controller;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 @RequestMapping("/security-login")
 public class SecurityLoginController {
-    private final UserService userService;
+    private final @Lazy UserService userService;
 
     // 로그인 홈 페이지
     @GetMapping(value={"", "/"})

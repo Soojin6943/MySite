@@ -1,4 +1,4 @@
-package org.mySite.SpringSecurity;
+package org.mySite.user.SpringSecurity;
 
 import lombok.RequiredArgsConstructor;
 import org.mySite.user.domain.User;
