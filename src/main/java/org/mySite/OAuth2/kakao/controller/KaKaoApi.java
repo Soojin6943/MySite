@@ -1,17 +1,17 @@
 package org.mySite.OAuth2.kakao.controller;
 
 import lombok.Getter;
+import org.mySite.OAuth2.kakao.dto.KakaoTokenResponse;
+import org.mySite.OAuth2.kakao.dto.KakaoUserResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.HashMap;
 
 @Component
 @Getter
@@ -25,7 +25,7 @@ public class KaKaoApi {
     private String kakaoRedirectUri;
 
     // 인증 코드를 사용하여 토큰 요청
-    public String getAccessToken(String code){
+    public KakaoTokenResponse getAccessToken(String code){
         RestTemplate restTemplate = new RestTemplate(); // 동기식 (요청보내면 응답 받을 때까지 블로킹)
 
         String tokenUrl = "https://kauth.kakao.com/oauth/token";
@@ -45,9 +45,29 @@ public class KaKaoApi {
                 new HttpEntity<>(params, headers);
 
         // 카카오로부터 받은 응답
-        String response = restTemplate.postForObject(tokenUrl, request, String.class);
+        ResponseEntity<KakaoTokenResponse> response = restTemplate.postForEntity(tokenUrl, request, KakaoTokenResponse.class);
 
-        return response;
+        return response.getBody();
+    }
+
+    // 사용자 정보 요청
+    public KakaoUserResponse getUserInfo(String accessToken){
+        RestTemplate rt = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer "+accessToken);
+        headers.add("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
+
+        HttpEntity<Void> request = new HttpEntity<>(headers);
+
+        ResponseEntity<KakaoUserResponse> response = rt.exchange(
+                "https://kapi.kakao.com/v2/user/me",
+                HttpMethod.GET,
+                request,
+                KakaoUserResponse.class
+        );
+
+        return response.getBody();
     }
 
 }
