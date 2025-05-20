@@ -77,4 +77,19 @@ public class TestController {
 
         return "home";
     }
+
+    // 3. 로그아웃
+    @GetMapping("/kakao_login/logout")
+    public String kakaoLogout(){
+        String req_uri = "https://kauth.kakao.com/oauth/logout?"
+                + "client_id=" + kaKaoApi.getKakaoApiKey()
+                + "&logout_redirect_uri=" + kaKaoApi.getKakaoLogoutUri();
+
+        return "redirect:" + req_uri;
+    }
+
+    @RequestMapping("/oauth/kakao/logout")
+    public String logoutSecc(){
+        return "main";
+    }
 }
