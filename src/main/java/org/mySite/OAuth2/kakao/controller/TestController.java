@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import java.util.Optional;
 
@@ -60,6 +61,20 @@ public class TestController {
         // 5. 세션에 로그인 정보 저장
         session.setAttribute("loginUser", loginUser);
         System.out.println("로그인 완료 "+ loginUser);
-        return "redirect:/";
+        return "redirect:/kakao";
+    }
+
+    // 0. 로그인시 후 메인 화면
+    @GetMapping("/kakao")
+    public String kakaoLoginMain(Model model, @SessionAttribute(value = "loginUser", required = false) KakaoUser loginUser){
+        model.addAttribute("loginType", "kakao_login");
+        model.addAttribute("pageName", "카카오 로그인");
+
+        if (loginUser != null){
+            String nickname = loginUser.getNickname();
+            model.addAttribute("nickname", nickname);
+        }
+
+        return "home";
     }
 }
