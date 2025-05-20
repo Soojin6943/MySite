@@ -24,6 +24,9 @@ public class KaKaoApi {
     @Value("${kakao.redirect_uri}")
     private String kakaoRedirectUri;
 
+    @Value("${kakao.logout_redirect_uri}")
+    private String kakaoLogoutUri;
+
     // 인증 코드를 사용하여 토큰 요청
     public KakaoTokenResponse getAccessToken(String code){
         RestTemplate restTemplate = new RestTemplate(); // 동기식 (요청보내면 응답 받을 때까지 블로킹)
