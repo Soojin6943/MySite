@@ -1,4 +1,4 @@
-package org.mySite.user.controller;
+package org.mySite.userPractice.controller;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -6,9 +6,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.mySite.user.domain.User;
 import org.mySite.user.domain.UserRole;
-import org.mySite.user.dto.JoinRequest;
 import org.mySite.user.dto.LoginRequest;
-import org.mySite.user.service.UserService;
+import org.mySite.userPractice.domain.UserPractice;
+import org.mySite.userPractice.dto.JoinRequest;
+import org.mySite.userPractice.service.UserPracticeService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/cookie-login")
 public class CookieLoginController {
 
-    private final UserService userService;
+    private final UserPracticeService userPracticeService;
 
     // 쿠키 로그인 페이지
     @GetMapping(value = {"", "/"})
@@ -33,7 +34,7 @@ public class CookieLoginController {
         //model.addAttribute("nickname", "kk");
 
         if (userId != null) {
-            User loginUser = userService.getLoginUser(userId);
+            UserPractice loginUser = userPracticeService.getLoginUser(userId);
             model.addAttribute("nickname", loginUser.getNickname());
 
         }
@@ -58,12 +59,12 @@ public class CookieLoginController {
         model.addAttribute("pageName", "쿠키 로그인");
 
         // loginId 중복 체크
-        if(userService.checkLoginId(joinRequest.getLoginId())) {
+        if(userPracticeService.checkLoginId(joinRequest.getLoginId())) {
             bindingResult.addError(new FieldError("joinRequest", "loginId", "중복된 아이디입니다."));
         }
 
         // 닉네임 중복 체크
-        if (userService.checkNickname(joinRequest.getNickname())){
+        if (userPracticeService.checkNickname(joinRequest.getNickname())){
             bindingResult.addError(new FieldError("joinRequest", "nickname", "중복된 닉네임입니다."));
         }
 
@@ -76,7 +77,7 @@ public class CookieLoginController {
             return "join";
         }
 
-        userService.join(joinRequest);
+        userPracticeService.join(joinRequest);
         return "redirect:/cookie-login";
     }
 
@@ -96,7 +97,7 @@ public class CookieLoginController {
         model.addAttribute("loginType", "cookie-login");
         model.addAttribute("pageName", "쿠키 로그인");
 
-        User user = userService.login(loginRequest);
+        UserPractice user = userPracticeService.login(loginRequest);
         // System.out.println("입력된 로그인 ID: " + loginRequest.getLoginId());
 
 
@@ -137,7 +138,7 @@ public class CookieLoginController {
         model.addAttribute("pageName", "쿠키 로그인");
         model.addAttribute("loginType", "cookie-login");
 
-        User user = userService.getLoginUser(userId);
+        UserPractice user = userPracticeService.getLoginUser(userId);
 
         if (user == null){
             return "redirect:/cookie-login/login";
@@ -154,7 +155,7 @@ public class CookieLoginController {
         model.addAttribute("pageName", "쿠키 로그인");
         model.addAttribute("loginType", "cookie-login");
 
-        User user = userService.getLoginUser(userId);
+        UserPractice user = userPracticeService.getLoginUser(userId);
 
         if (user == null){
             return "redirect:/cookie-login/login";

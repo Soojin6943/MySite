@@ -1,15 +1,14 @@
-package org.mySite.user.controller;
+package org.mySite.userPractice.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.mySite.user.domain.User;
 import org.mySite.user.domain.UserRole;
-import org.mySite.user.dto.JoinRequest;
 import org.mySite.user.dto.LoginRequest;
-import org.mySite.user.service.UserService;
+import org.mySite.userPractice.domain.UserPractice;
+import org.mySite.userPractice.dto.JoinRequest;
+import org.mySite.userPractice.service.UserPracticeService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/session-login")
 public class SessionLoginController {
 
-    private final UserService userService;
+    private final UserPracticeService userPracticeService;
 
     // 로그인 홈 페이지
     @GetMapping(value = {"", "/"})
@@ -30,7 +29,7 @@ public class SessionLoginController {
         model.addAttribute("pageName", "세션 로그인");
 
         if (userId != null){
-            User loginUser = userService.getLoginUser(userId);
+            UserPractice loginUser = userPracticeService.getLoginUser(userId);
             model.addAttribute("nickname", loginUser.getNickname());
         }
 
@@ -56,12 +55,12 @@ public class SessionLoginController {
         model.addAttribute("pageName", "세션 로그인");
 
         // id 중복 체크
-        if(userService.checkLoginId(joinRequest.getLoginId())){
+        if(userPracticeService.checkLoginId(joinRequest.getLoginId())){
             bindingResult.addError(new FieldError("joinRequest", "loginId", "로그인 아이디가 중복됩니다."));
         }
 
         // nickname 중복 체크
-        if(userService.checkNickname(joinRequest.getNickname())){
+        if(userPracticeService.checkNickname(joinRequest.getNickname())){
             bindingResult.addError(new FieldError("joinRequest", "nickname", "닉네임이 중복됩니다"));
         }
 
@@ -75,7 +74,7 @@ public class SessionLoginController {
             return "join";
         }
 
-        userService.join(joinRequest);
+        userPracticeService.join(joinRequest);
         return "redirect:/session-login";
     }
 
@@ -95,7 +94,7 @@ public class SessionLoginController {
         model.addAttribute("loginType", "session-login");
         model.addAttribute("pageName", "세션 로그인");
 
-        User user = userService.login(loginRequest);
+        UserPractice user = userPracticeService.login(loginRequest);
 
         if(user == null) {
             bindingResult.reject("loginFail", "로그인 아이디 또는 비밀번호가 틀렸습니다.");
@@ -139,7 +138,7 @@ public class SessionLoginController {
         model.addAttribute("loginType", "session-login");
         model.addAttribute("pageName", "세션 로그인");
 
-        User loginUser = userService.getLoginUser(userId);
+        UserPractice loginUser = userPracticeService.getLoginUser(userId);
 
         if(loginUser == null){
             return "redirect:/session-login/login";
@@ -155,7 +154,7 @@ public class SessionLoginController {
         model.addAttribute("loginType", "session-login");
         model.addAttribute("pageName", "세션 로그인");
 
-        User loginUser = userService.getLoginUser(userId);
+        UserPractice loginUser = userPracticeService.getLoginUser(userId);
 
         if(loginUser == null){
             return "redirect:/session-login/login";
