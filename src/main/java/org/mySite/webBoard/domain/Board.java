@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter  // todo : setter 제거하기
@@ -13,7 +14,7 @@ public class Board {
 
     @Id  // 기본키로 지정
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(length = 200)  // 열 길이 200으로 설정
     private String subject;
@@ -22,4 +23,9 @@ public class Board {
     private String content;
 
     private LocalDateTime createDate;
+
+    // 게시판에서 댓글 참조
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    private List<Comment> commentList;
+
 }
