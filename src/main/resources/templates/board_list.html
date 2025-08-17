@@ -1,0 +1,16 @@
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<table>
+    <thead>
+        <tr>
+            <th>제목</th>
+            <th>작성일시</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="board : ${boardList}">
+            <td th:text="${board.subject}"></td>
+            <td th:text="${board.createDate}"></td>
+        </tr>
+    </tbody>
+</table>
