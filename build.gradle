@@ -36,6 +36,7 @@ dependencies {
 
     // thymeleaf
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
 
     // notnull + notempty + notblank를 위해
     implementation 'org.springframework.boot:spring-boot-starter-validation'
