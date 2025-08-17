@@ -5,7 +5,22 @@
     <title>Title</title>
 </head>
 <body>
+    <!--게시물 제목 + 본문-->
     <h1 th:text="${board.subject}"></h1>
     <div th:text="${board.content}"></div>
+
+    <!--게시물 댓글-->
+    <h5 th:text="|${#lists.size(board.commentList)}개의 답변이 있습니다.|"></h5>
+    <div>
+      <ul>
+        <li th:each="comment : ${board.commentList}" th:text="${comment.content}"></li>
+      </ul>
+    </div>
+
+    <!--댓글 등록-->
+    <form th:action="@{|/comment/${board.id}|}" method="post">
+      <textarea name="content" id="content" rows="5"></textarea>
+      <input type="submit" value="댓글 등록">
+    </form>
 </body>
 </html>
