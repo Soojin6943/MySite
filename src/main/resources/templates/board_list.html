@@ -1,18 +1,34 @@
+<!doctype html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap.min.css}">
 
-<table>
-    <thead>
-        <tr>
-            <th>제목</th>
-            <th>작성일시</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr th:each="board : ${boardList}">
-            <td>
-                <a th:href="@{|/board/detail/${board.id}|}" th:text="${board.subject}"></a>
-            </td>
-            <td th:text="${board.createDate}"></td>
-        </tr>
-    </tbody>
-</table>
+    <title>수리수리마수리</title>
+</head>
+<body>
+    <div class="container my-3">
+        <table class="table">
+            <thead class="table-dark">
+                <tr>
+                    <th>번호</th>
+                    <th>제목</th>
+                    <th>작성일시</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="board, loop : ${boardList}">
+                    <td th:text="${loop.count}"></td>
+                    <td>
+                        <a th:href="@{|/board/detail/${board.id}|}" th:text="${board.subject}"></a>
+                    </td>
+                    <td th:text="${#temporals.format(board.createDate, 'yyyy-MM-dd HH:mm')}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
