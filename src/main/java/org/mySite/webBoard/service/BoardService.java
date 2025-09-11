@@ -6,6 +6,7 @@ import org.mySite.webBoard.repository.BoardRepository;
 import org.springframework.stereotype.Service;
 import org.mySite.DataNotFoundException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,5 +33,13 @@ public class BoardService {
         } else { // 없으면 예외처리
             throw new DataNotFoundException("board not found");
         }
+    }
+
+    public void create(String subject, String content){
+        Board b = new Board();
+        b.setSubject(subject);
+        b.setContent(content);
+        b.setCreateDate(LocalDateTime.now());
+        this.boardRepository.save(b);
     }
 }
