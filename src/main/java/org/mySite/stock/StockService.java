@@ -10,7 +10,8 @@ public class StockService {
 
     private final StockRepository stockRepository;
 
-    public synchronized void decrease(Long id) {
+    @Transactional
+    public void decrease(Long id) {
         Stock stock = stockRepository.getById(id);
         stock.decrease();
         stockRepository.saveAndFlush(stock);
